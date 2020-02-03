@@ -1,3 +1,7 @@
+<!--
+  Déclaration de l'entête de la calculatrice
+-->
+
 <ion-header>
   <ion-toolbar>
     <ion-title>
@@ -8,12 +12,18 @@
 
 <ion-content>
     <ion-card class="welcome-card">
+<!--
+  déclaration d'un input pour l'écran
+-->
 
       <ion-card-header>
         <h2>
      <ion-input [(ngModel)]="view">
      </ion-input>
     </h2>
+    <!--
+      déclararation d'un ion-card qui contient tout les boutons
+    -->
       </ion-card-header>
       <ion-card-content>
         <ion-grid>
