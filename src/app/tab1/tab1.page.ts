@@ -1,8 +1,5 @@
 import { Component } from '@angular/core';
-import {log} from 'util';
-import { Plugins } from 'protractor/built/plugins';
-
-
+import {compilerIsNewStylingInUse} from "@angular/compiler/src/render3/view/styling_state";
 
 @Component({
   selector: 'app-tab1',
@@ -10,127 +7,100 @@ import { Plugins } from 'protractor/built/plugins';
   styleUrls: ['tab1.page.scss']
 })
 export class Tab1Page {
+  grille = [
+    [ "AC","+/-","%","/"],
+    [ "7","8","9","*"],
+    [ "4","5","6","-"],
+    [ "1","2","3","+"],
+    [ "0",",","="],
+  ];
+  ecran = '';
   constructor() {}
-  //Déclaration des variables
-  view: string =" ";
-  nombre1:number;
-  nombre2:number;
-  operateur:string;
-  submit(){
-    //declaration du second nombre à utiliser
-    this.nombre2=+this.view;
-    //declaration et initialisation de ma variable view 
-    this.view=" ";
-    //le switch pour chaque opérateur
-    switch(this.operateur){
-      case "plus":
-        console.log(this.nombre1+"+"+this.nombre2);
-        console.log(this.nombre1 + this.nombre2);
-        this.view += this.nombre1+this.nombre2;
+  Cliquer(touch) {
+    if(isNaN(touch)){
+      switch (touch) {
+        case "AC":
+          let screen = this.ecran.split('')
+          screen.pop()
+          this.ecran = screen.join('')
         break;
-       
- case "moins":{
-  console.log(this.nombre1+"-"+this.nombre2);
-  console.log(this.nombre1 - this.nombre2);
-  this.view += this.nombre1-this.nombre2;
-  break;
-  
-  }
-  case "multi":{
-    console.log(this.nombre1+"*"+this.nombre2);
-    console.log(this.nombre1 * this.nombre2);
-    this.view += this.nombre1*this.nombre2;
-    break;
-
-  
-  }
-  case"division":{
-  console.log(this.nombre1+"/"+this.nombre2);
-  console.log(this.nombre1 /this.nombre2);
-  this.view += this.nombre1/this.nombre2;
-  break;
-  }
-  case"modulo":{
-    console.log(this.nombre1+"%"+this.nombre2);
-    console.log(this.nombre1  % this.nombre2);
-    this.view += this.nombre1 % this.nombre2;
-    break;
-    }
-
-    }
-  }
-  //la fonction clear"AC"
-
-  clear(){
-    this.view=" ";
-    log(this.view);
-  }
-  //la fonction click pour afficher un nombre à l'écran
-  click(nbr:number){
-    this.view=this.view + nbr;
-    log(this.view);
-  }
-  //la fonctin plus
-  plus(){
-    this.nombre1 =+ this.view;
-    this.operateur = "plus";
-    this.view="";
-    console.log(this.view);
-  }
-  //la fonction moins
-  moins(){
-    this.nombre1 =+ this.view;
-    this.operateur = "moins";
-    this.view="";
-    console.log(this.view);
-
-  }
-  //la fonction de la multiplication
-  multi(){
-  this.nombre1 =+ this.view;
-  this.operateur = "multi";
-  this.view="";
-  console.log(this.view);
-  }
-  //la fonction de la division
-  division(){
-    this.nombre1 =+ this.view;
-    this.operateur = "division";
-    this.view="";
-    console.log(this.view);
-    }
-    //la fonction modulo
-    modulo(){
-        this.nombre1 =+ this.view;
-        this.operateur = "modulo";
-        this.view="";
-        console.log(this.view);
-        }
-        //la fonction plusoumoins
-        plus_moins(pm:number){
-          pm=+this.view;
-          if(pm >= 0){
-            this.view="";
-           this.view+= pm=+(pm*-1);
-            console.log(this.view);
-            
+        case "+/-":
+            this.ecran.length != 0 ? isNaN(parseInt(this.ecran.split('').pop())) ? this.ecran+= "-" : "" : this.ecran+= "-"
+        break;
+        case ",":
+            this.ecran.length != 0 ? !isNaN(parseInt(this.ecran.split('').pop())) ? this.ecran+= "," : "" : ""
+        break;
+        case "+":
+            this.ecran.length != 0 ? !isNaN(parseInt(this.ecran.split('').pop())) ? this.ecran+= "+" : "" : ""
+        break;
+        case "/":
+            this.ecran.length != 0 ? !isNaN(parseInt(this.ecran.split('').pop())) ? this.ecran+= "/" : "" : ""
+        break;
+        case "-":
+            this.ecran.length != 0 ? !isNaN(parseInt(this.ecran.split('').pop())) ? this.ecran+= "-" : "" : ""
+        break;
+        case "x":
+            this.ecran.length != 0 ? !isNaN(parseInt(this.ecran.split('').pop())) ? this.ecran+= "*" : "" : ""
+        break;
+        case "%":
+            this.ecran.length != 0 ? !isNaN(parseInt(this.ecran.split('').pop())) ? this.ecran+= "%" : "" : ""
+        break;
+        case "=":
+            const add = this.ecran.split('+');
+            const minus = this.ecran.split('-');
+            const multiplication = this.ecran.split('*');
+            const division = this.ecran.split('/');
+            const modulo = this.ecran.split('%');
+            if (add.length > 1) {
+              let result = 0;
+              for (let i = 0; i < add.length; i++) {
+                  result += parseInt(add[i], 10);
+              }
+              this.ecran = String(result);
+            } else if (minus.length > 1) {
+              let result = 0;
+              for (let i = 0; i < minus.length; i++) {
+                if (i === 0) {
+                  result -= parseInt(minus[i], 10);
+                  result = -1 * result;
+                } else {
+                    result -= parseInt(minus[i], 10);
+                }
+              }
+              this.ecran = String(result);
+            } else if (multiplication.length > 1) {
+              let result = 1;
+              for (let i = 0; i < multiplication.length; i++) {
+                result *= parseInt(multiplication[i], 10);
+              }
+              this.ecran = String(result);
+            } else if (division.length > 1) {
+              let result = 0;
+              for (let i = 0; i < division.length; i++) {
+                if (i === 0) {
+                  result = parseInt(division[i].trim(), 10);
+                } else {
+                  result = result / parseInt(division[i].trim(), 10);
+                }
+              }
+              this.ecran = String(result);
+            } else if (modulo.length > 1) {
+              let result = 1;
+              for (let i = 0; i < modulo.length; i++) {
+                if (i === 0) {
+                  result = parseInt(modulo[i].trim(), 10);
+                } else {
+                  result = result % parseInt(modulo[i].trim(), 10);
+                }   
             }
-            else{
-              pm=+(pm*-1);
-            this.view="";
-            this.view+= pm=+(pm*-1);
-            console.log(this.view);
-          }
-          
-    }
-    //la fonction qui gère la virgule 
-    point(nbr1:number){
-     
-      nbr1=+this.view;
-      this.view="";
-      this.view+=nbr1+".";
-      console.log(this.view);
-
-    }
+              this.ecran = String(result);
+            }
+        break;
+        default:
+          break;
+      }
+    }else{
+      this.ecran += touch
+    }   
+  }
 }
-
